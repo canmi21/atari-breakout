@@ -10,6 +10,7 @@ dependencies = [
 	"numpy>=2.0",
 	"matplotlib>=3.10",
 	"pygame>=2.6",
+	"tqdm>=4.66",
 ]
 
 [build-system]

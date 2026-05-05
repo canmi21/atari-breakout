@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from tqdm import tqdm
 
 from breakout._native import ReplayBuffer
 from breakout.agent import DQNAgent
@@ -90,7 +91,8 @@ def main() -> None:
 	last_eval_time = time.perf_counter()
 
 	with CSVLogger(cfg.log_path) as logger:
-		for step in range(1, cfg.total_steps + 1):
+		pbar = tqdm(range(1, cfg.total_steps + 1), desc="train", unit="step", smoothing=0.05)
+		for step in pbar:
 			eps = linear_eps(step, cfg)
 			state = np.stack(stack)
 			action = agent.select_action(state, eps)
@@ -118,6 +120,17 @@ def main() -> None:
 			if step % cfg.target_sync_freq == 0:
 				agent.sync_target()
 
+			if step % 500 == 0:
+				rolling_now = (
+					sum(episode_returns) / len(episode_returns) if episode_returns else 0.0
+				)
+				pbar.set_postfix(
+					eps=f"{eps:.3f}",
+					loss=("--" if loss != loss else f"{loss:.3f}"),
+					ret=f"{rolling_now:.1f}",
+					ep=len(episode_returns),
+				)
+
 			if step % cfg.eval_freq == 0:
 				eval_ret = evaluate(
 					agent, eval_env, cfg.eval_episodes, cfg.eval_epsilon, cfg.seed + 1000
@@ -136,7 +149,7 @@ def main() -> None:
 					eval_return=eval_ret,
 					fps=fps,
 				)
-				print(
+				pbar.write(
 					f"step {step:>8} | eps {eps:.3f} | loss {loss:.4f} "
 					f"| rolling {rolling:7.2f} | eval {eval_ret:6.2f} | fps {fps:.0f}"
 				)
