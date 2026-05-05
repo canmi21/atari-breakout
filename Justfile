@@ -47,6 +47,10 @@ train *args:
 play *args:
 	uv run python -m breakout.play {{args}}
 
+# Render training curves from logs/train.csv.
+plot *args:
+	uv run python -m breakout.plot {{args}}
+
 # Clean cargo build artifacts.
 clean:
 	cargo clean
