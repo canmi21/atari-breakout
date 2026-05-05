@@ -1,0 +1,24 @@
+/target
+
+node_modules/
+
+.env
+*.local
+
+.DS_Store
+*.log
+
+.claude/
+
+result
+result-*
+.direnv/
+
+# python / uv
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+.python-version
