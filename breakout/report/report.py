@@ -14,8 +14,7 @@
 # # Atari Breakout DQN — Training Report
 #
 # Run `just train` first to produce `logs/train.csv` and
-# `checkpoints/best.pt`, then `just report` to (re)build this notebook from
-# them.
+# `checkpoints/best.pt`, then `just report` to (re)build this notebook.
 
 # %%
 import csv
@@ -39,6 +38,8 @@ def _find_repo_root() -> Path:
 ROOT = _find_repo_root()
 LOG_PATH = ROOT / "logs/train.csv"
 CKPT_PATH = ROOT / "checkpoints/best.pt"
+CURVES_PNG = ROOT / "logs/curves.png"
+FRAMES_PNG = ROOT / "logs/frames.png"
 
 # %% [markdown]
 # ## Training summary
@@ -104,7 +105,12 @@ axes[1, 1].set_xlabel("step")
 axes[1, 1].grid(True, alpha=0.3)
 
 fig.tight_layout()
-plt.show()
+fig.savefig(CURVES_PNG, dpi=120, bbox_inches="tight")
+plt.close(fig)
+print(f"saved {CURVES_PNG.relative_to(ROOT)}")
+
+# %% [markdown]
+# ![training curves](../../logs/curves.png)
 
 # %% [markdown]
 # ## Q-network architecture
@@ -120,7 +126,7 @@ print(f"\ntotal trainable params: {sum(p.numel() for p in net.parameters()):,}")
 # ## Sample play — frames from one greedy episode
 #
 # Loads `best.pt`, plays one episode with `epsilon=0.05`, captures every
-# rendered frame, and shows a 4×4 grid of evenly-spaced screenshots.
+# rendered frame, and saves a 4×4 grid of evenly-spaced screenshots.
 
 # %%
 from breakout.agent import DQNAgent
@@ -165,4 +171,9 @@ for ax, idx in zip(axes.flat, indices):
 	ax.set_title(f"frame {idx}", fontsize=9)
 	ax.axis("off")
 fig.tight_layout()
-plt.show()
+fig.savefig(FRAMES_PNG, dpi=110, bbox_inches="tight")
+plt.close(fig)
+print(f"saved {FRAMES_PNG.relative_to(ROOT)}")
+
+# %% [markdown]
+# ![sample episode frames](../../logs/frames.png)
