@@ -6,16 +6,17 @@ via `just play -- --checkpoint checkpoints/best.pt`.
 
 from __future__ import annotations
 
+import sys
+
 import numpy as np
 import torch
 
 from breakout.agent import DQNAgent
-from breakout.config import parse_play_args, resolve_device
+from breakout.config import PlayConfig, parse_play_args, resolve_device
 from breakout.env import FRAME_STACK, make_eval_env
 
 
-def main() -> None:
-	cfg = parse_play_args()
+def run(cfg: PlayConfig) -> None:
 	device = torch.device(resolve_device(cfg.device))
 	print(f"device: {device}, checkpoint: {cfg.checkpoint}")
 
@@ -50,6 +51,13 @@ def main() -> None:
 		print(f"episode {ep + 1}/{cfg.episodes}: return {ep_return:.0f}, steps {steps}")
 
 	env.close()
+
+
+def main(argv: list[str] | None = None) -> None:
+	if argv is None and "ipykernel" in sys.modules:
+		argv = []
+	cfg = parse_play_args(argv)
+	run(cfg)
 
 
 if __name__ == "__main__":

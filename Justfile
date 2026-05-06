@@ -51,6 +51,11 @@ play *args:
 plot *args:
 	uv run python -m breakout.plot {{args}}
 
+# Build the training-report notebook from breakout/report/report.py.
+report:
+	uv run jupytext --to ipynb breakout/report/report.py
+	uv run jupyter nbconvert --to notebook --execute --inplace breakout/report/report.ipynb
+
 # Clean cargo build artifacts.
 clean:
 	cargo clean

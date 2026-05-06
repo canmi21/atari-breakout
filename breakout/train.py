@@ -5,6 +5,7 @@ Run via `just train` or `uv run python -m breakout.train --help`.
 
 from __future__ import annotations
 
+import sys
 import time
 from collections import deque
 from pathlib import Path
@@ -49,8 +50,7 @@ def manage_checkpoints(ckpt_dir: Path, keep: int) -> None:
 		step_ckpts.pop(0).unlink()
 
 
-def main() -> None:
-	cfg = parse_train_args()
+def run(cfg: TrainConfig) -> None:
 	device = torch.device(resolve_device(cfg.device))
 	print(f"device: {device}")
 
@@ -163,6 +163,16 @@ def main() -> None:
 
 	train_env.close()
 	eval_env.close()
+
+
+def main(argv: list[str] | None = None) -> None:
+	# Under a jupyter kernel (nbconvert --execute, Run All, etc.) sys.argv
+	# carries the kernel's connection-file flags; default to [] so we
+	# fall back to TrainConfig defaults instead of choking in argparse.
+	if argv is None and "ipykernel" in sys.modules:
+		argv = []
+	cfg = parse_train_args(argv)
+	run(cfg)
 
 
 if __name__ == "__main__":
