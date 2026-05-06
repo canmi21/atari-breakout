@@ -8,6 +8,12 @@ Double DQN, PyTorch trainer, Rust replay buffer via PyO3.
 - **Replay buffer in Rust**: stores single `uint8` frames and reconstructs the 4-frame stack at sample time, ~4x memory saving over a pre-stacked layout
 - **Auto device pick** (mps / cuda / cpu), tqdm progress bar, CSV log + matplotlib post-mortem curves, live SDL demo via `render_mode="human"`
 
+## Training curves
+
+1.5M steps on an M-series Mac (mps), ~2 h 45 min wall-clock, eval return plateauing around 20.
+
+![training curves](logs/curves.png)
+
 ## Usage
 
 Enter the pinned dev shell:
